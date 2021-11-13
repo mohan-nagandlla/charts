@@ -1,19 +1,9 @@
 apiVersion: v1
 entries:
-  Prometheus:
-  - apiVersion: v1
-    appVersion: "1.0"
-    created: "2021-11-13T04:48:47.596606098Z"
-    description: Prometheus from operator
-    digest: 54b95fbcbe22ad7aaac54841fa5b5fe79770c9fb654e3b50851fbd9aa470dc75
-    name: Prometheus
-    urls:
-    - Prometheus-0.1.0.tgz
-    version: 0.1.0
   ingres:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2021-11-13T04:48:47.598928575Z"
+    created: "2021-11-13T05:08:10.220287693Z"
     description: A Helm chart for Kubernetes
     digest: fe83ee591f445930bfe9ed417b72948d261455f96fc84956854968b6b5493477
     name: ingres
@@ -21,4 +11,14 @@ entries:
     urls:
     - ingres-0.1.0.tgz
     version: 0.1.0
-generated: "2021-11-13T04:48:47.591380512Z"
+  prometheus:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: "2021-11-13T05:08:10.223958627Z"
+    description: Prometheus from operator
+    digest: 6b6195700ccb615f3902d9467904ed5663a69fc7487dbd92608ebae87718599f
+    name: prometheus
+    urls:
+    - prometheus-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-11-13T05:08:10.217207903Z"
