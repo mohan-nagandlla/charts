@@ -1,0 +1,17 @@
+{
+	"ulid": "01F6HEYKZHS45GBASP6172K1N5",
+	"minTime": 1620955923139,
+	"maxTime": 1620957600000,
+	"stats": {
+		"numSamples": 10227,
+		"numSeries": 573,
+		"numChunks": 573
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01F6HEYKZHS45GBASP6172K1N5"
+		]
+	},
+	"version": 1
+}

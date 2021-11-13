@@ -1,0 +1,71 @@
+{{- if .Values.Prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  alerting:
+    alertmanagers:
+    - name: {{ .Release.Name }}-alertmanager
+      namespace: {{ .Release.Namespace }}
+      port: web
+  replicas: {{ .Values.Prometheus.spec.replicas }}
+  retention: {{ .Values.Prometheus.spec.retention }}
+  enableAdminAPI: true
+  externalUrl: {{ .Values.Prometheus.spec.web.externalurl }}
+  serviceAccountName: {{ .Release.Name }}-serviceaccount
+  serviceMonitorNamespaceSelector: {}
+  ruleNamespaceSelector: {}
+  podMonitorNamespaceSelector: {}
+  probeNamespaceSelector: {}
+  podMonitorSelector:
+    matchLabels:
+      purpose: {{ .Release.Name }}-prometheus
+  probeSelector:
+    matchLabels:
+      purpose: {{ .Release.Name }}-prometheus
+  ruleSelector:
+    matchLabels:
+      purpose: {{ .Release.Name }}-prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      purpose: {{ .Release.Name }}-prometheus
+  resources:
+    limits:
+      cpu: {{ .Values.Prometheus.spec.resources.limits.cpu }}
+      memory: {{ .Values.Prometheus.spec.resources.limits.memory }}
+    requests:
+      cpu: {{ .Values.Prometheus.spec.resources.requests.cpu }}
+      memory: {{ .Values.Prometheus.spec.resources.requests.memory }}
+  securityContext:
+    fsGroup: {{ .Values.Prometheus.spec.securityContext.fsGroup }}
+    runAsGroup: {{ .Values.Prometheus.spec.securityContext.runAsGroup }}
+    runAsNonRoot: {{ .Values.Prometheus.spec.securityContext.runAsNonRoot }}
+    runAsUser: {{ .Values.Prometheus.spec.securityContext.runAsUser }}
+  containers:
+  - args:
+    - /bin/prometheus --web.console.templates=/etc/prometheus/consoles --web.external-url={{ .Values.Prometheus.spec.web.externalurl }} --web.page-title={{ .Values.Prometheus.spec.web.title }} --web.console.libraries=/etc/prometheus/console_libraries --config.file=/etc/prometheus/config_out/prometheus.env.yaml --storage.tsdb.path=/prometheus --storage.tsdb.retention.time={{ .Values.Prometheus.spec.retention }} --web.enable-lifecycle --storage.tsdb.no-lockfile --web.enable-admin-api --web.route-prefix=/ --log.level=info 2>&1 | tee -a /prometheus/file.log
+    command:
+    - /bin/sh
+    - -c
+    name: prometheus
+  storage:
+    volumeClaimTemplate:
+      metadata:
+        name: pvc
+      spec:
+        resources:
+          requests:
+            storage: {{ .Values.Prometheus.spec.storage.storage }}
+        volumeMode: Filesystem
+{{- if .Values.Prometheus.spec.storage.Persistent.name }}
+        volumeName: {{ .Values.Prometheus.spec.storage.Persistent.name }}
+{{- end }}
+{{- if .Values.Prometheus.spec.storage.storageClassName }}
+        storageClassName: {{ toYaml .Values.Prometheus.spec.storage.storageClassName }}
+{{- end }}
+{{- if .Values.Prometheus.spec.version }}
+  version: {{ .Values.Prometheus.spec.version }}
+{{- end }}
+{{- end }}
