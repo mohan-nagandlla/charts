@@ -12,6 +12,7 @@ spec:
       port: web
   replicas: {{ .Values.Prometheus.spec.replicas }}
   retention: {{ .Values.Prometheus.spec.retention }}
+  image: {{ .Values.Prometheus.spec.image }}
   enableAdminAPI: true
   externalUrl: {{ .Values.Prometheus.spec.web.externalurl }}
   serviceAccountName: {{ .Release.Name }}-serviceaccount

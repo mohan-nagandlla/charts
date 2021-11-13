@@ -7,6 +7,7 @@ Prometheus:
       title: "test prometheus"
       externalurl: http://testprometheus:9090
     retention: 1d
+    image:
     replicas: 1
     version: {} ################## if you dont want any specified version then leave as {} it will take latest version
     resources:
