@@ -1,0 +1,53 @@
+operator:
+  enabled: true
+  image: quay.io/integreatly/grafana-operator:v3.10.2
+  grafanaImage: grafana/grafana
+  grafanaImageTag: 8.0.3
+  imagePullSecrets: []
+  # - name: grafana
+grafana:
+  enabled: true
+  ingress:
+    enabled: False
+  datasource:
+    enabled: true
+    name: Prometheus
+    isDefault: true
+    url: http://localhost:9090
+  spec:
+    alerting:
+      enabled: false
+    security:
+      admin_user: "admin"
+      admin_password: "mohan_admin"
+    auth.basic:
+      enabled: true
+  dataStorage:
+    size: 2Gi
+    class: sc-test
+  service:
+    type: "LoadBalancer"
+    port: 31093
+    annotations: 
+      metallb.universe.tf/allow-shared-ip: prometheus
+  resources:
+    limits:
+      cpu: 500m
+      memory: 600Mi
+    requests:
+      cpu: 500m
+      memory: 600Mi
+  replicas: 2
+  securityContext:
+    fsGroup: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    runAsUser: 1000
+
+
+Enterprises:
+  enabled: true
+  ldap:
+    group_dn: "CN=grp,DN=example,DN=com"    # group DN (string)
+    org_role: "Admin"      # Admin or Editor or Viewer (string)
+    org_id: 1  # Org ID (integer)

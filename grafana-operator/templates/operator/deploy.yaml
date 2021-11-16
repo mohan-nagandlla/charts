@@ -1,0 +1,50 @@
+{{- if .Values.operator.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      instance: grafana-operator-{{ .Release.Name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        instance: grafana-operator-{{ .Release.Name }}
+    spec:
+      serviceAccountName: grafana-operator-{{ .Release.Name }}
+      serviceAccount: grafana-operator-{{ .Release.Name }}
+      {{- if .Values.operator.imagePullSecrets }}
+      imagePullSecrets:
+      {{ toYaml .Values.operator.imagePullSecrets | indent 2 }}
+      {{- end }}
+      containers:
+        - name: grafana-operator
+          image: {{ .Values.operator.image }}
+          ports:
+            - containerPort: 8080
+              name: metrics
+          command:
+            - grafana-operator
+          args:
+            - --grafana-image={{ .Values.operator.grafanaImage }}
+            - --grafana-image-tag={{ .Values.operator.grafanaImageTag }}
+            - --scan-all
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TEMPLATE_PATH
+              value: /usr/local/bin/templates
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "grafana-operator"
+{{- end }}

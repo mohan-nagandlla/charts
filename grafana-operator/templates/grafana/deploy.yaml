@@ -1,0 +1,68 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: integreatly.org/v1alpha1
+kind: Grafana
+metadata:
+  name: {{ .Release.Name }}-grafana
+  annotations:
+    app: {{ .Release.Name }}-grafana
+  labels:
+    app: {{ .Release.Name }}-grafana
+spec:
+  ingress:
+    enabled: {{ .Values.grafana.ingress.enabled }}
+  config:
+    alerting:
+      enabled: {{ .Values.grafana.spec.alerting.enabled }}
+    log:
+      mode: "console"
+      level: "warn"
+    security:
+      admin_user: {{ .Values.grafana.spec.security.admin_user | quote }}
+      admin_password: {{ .Values.grafana.spec.security.admin_password | quote }}
+    auth.basic:
+      enabled: true
+    auth.anonymous:
+      enabled: True
+   {{- if .Values.Enterprises.enabled }}
+    auth.ldap:
+      allow_sign_up: true
+      config_file: /etc/grafana-configmaps/ldap-config/ldap.toml
+      enabled: true
+   {{- end }}
+  {{- if .Values.Enterprises.enabled }}
+  configMaps:
+  - ldap-config
+  {{- end }}
+  dataStorage:
+    accessModes: ["ReadWriteOnce"]
+    size: {{ .Values.grafana.dataStorage.size }}
+    class: {{ .Values.grafana.dataStorage.class }}
+  service:
+    name: {{ .Release.Name }}-grafana-service
+    type: ClusterIP
+  dashboardLabelSelector:
+    - matchExpressions:
+        - { key: instance, operator: In, values: [ {{ .Release.Name }}-grafana ] }
+  resources:
+    limits:
+      cpu: {{ .Values.grafana.resources.limits.cpu }}
+      memory: {{ .Values.grafana.resources.limits.memory }}
+    requests:
+      cpu: {{ .Values.grafana.resources.requests.cpu }}
+      memory: {{ .Values.grafana.resources.requests.memory }}
+  deployment:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      fsGroup: {{ .Values.grafana.securityContext.fsGroup }}
+      runAsGroup: {{ .Values.grafana.securityContext.runAsGroup }}
+      runAsUser: {{ .Values.grafana.securityContext.runAsUser }}
+    securityContext:
+      fsGroup: {{ .Values.grafana.securityContext.fsGroup }}
+      runAsGroup: {{ .Values.grafana.securityContext.runAsGroup }}
+      runAsNonRoot: true
+      runAsUser: {{ .Values.grafana.securityContext.runAsUser }}
+    replicas: {{ .Values.grafana.replicas }}
+    labels:
+      app: {{ .Release.Name }}-grafana
+    terminationGracePeriodSeconds: 30
+{{- end }}

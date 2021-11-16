@@ -1,0 +1,16 @@
+{{- if .Values.grafana.datasource.enabled }}
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDataSource
+metadata:
+  name: example-grafanadatasource
+spec:
+  name: prometheus
+  datasources:
+    - name: {{ .Values.grafana.datasource.name }}
+      type: prometheus
+      access: proxy
+      url: {{ .Values.grafana.datasource.url }}
+      isDefault: {{ .Values.grafana.datasource.isDefault }}
+      version: 1
+      editable: true
+{{- end }}

@@ -1,0 +1,23 @@
+{{- if .Values.grafana.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.grafana.service.annotations }}
+  annotations:
+{{ toYaml .Values.grafana.service.annotations | indent 4 }}
+{{- end }}
+  labels:
+    app: {{ .Release.Name }}-grafana
+  name: {{ .Release.Name }}-grafana-service-web
+  namespace: {{ .Release.Namespace }}
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: web
+    port: {{ .Values.grafana.service.port }}
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: grafana
+  type: {{ .Values.grafana.service.type | quote }}
+{{- end }}

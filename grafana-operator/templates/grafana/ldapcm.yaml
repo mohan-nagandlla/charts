@@ -1,0 +1,29 @@
+{{- if .Values.Enterprises.enabled }}
+apiVersion: v1
+data:
+  ldap.toml: |
+    [[servers]]
+    host = "ldap://server.com"
+    port = 689
+    use_ssl = true
+    start_tls = true
+    ssl_skip_verify = true
+    bind_dn = "CN=test,OU=CA,OU=SvcAccount,OU=P001,OU=ID,OU=Data,DC=example,DC=com"
+    bind_password = 'sdijfbvihasierbg'
+    search_filter = "(cn=%s)"
+    search_base_dns = ["DC=example,DC=com"]
+    [servers.attributes]
+    name = "givenName"
+    surname = "sn"
+    username = "cn"
+    member_of = "memberOf"
+    email =  "email"
+    [[servers.group_mappings]]
+    group_dn = {{ .Values.Enterprises.ldap.group_dn | quote }}
+    org_role = {{ .Values.Enterprises.ldap.org_role | quote }}
+    org_id = {{ .Values.Enterprises.ldap.org_id }}
+kind: ConfigMap
+metadata:
+  name: ldap-config
+  namespace: {{ .Release.Namespace }}
+{{- end }}
